@@ -23,26 +23,44 @@ public class RecyclingTipController {
     @GetMapping
     public ResponseEntity<List<RecyclingTip>> getAllRecyclingTips() {
         List<RecyclingTip> recyclingTips = recyclingTipService.getAllRecyclingTips();
-        return new ResponseEntity<>(recyclingTips, HttpStatus.OK);
+        return ResponseEntity.ok(recyclingTips);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RecyclingTip> getRecyclingTipById(@PathVariable("id") Long id) {
-        Optional<RecyclingTip> recyclingTip = recyclingTipService.getRecyclingTipById(id);
-        return recyclingTip.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<?> getRecyclingTipById(@PathVariable Long id) {
+        try {
+            Optional<RecyclingTip> optionalRecyclingTip = recyclingTipService.getRecyclingTipById(id);
+            RecyclingTip recyclingTip = optionalRecyclingTip.orElseThrow(() -> new ResourceNotFoundException("Recycling Tip not found with id: " + id));
+            return ResponseEntity.ok(recyclingTip);
+        } catch (ResourceNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
     }
 
     @PostMapping
     public ResponseEntity<RecyclingTip> saveRecyclingTip(@RequestBody RecyclingTip recyclingTip) {
         RecyclingTip savedRecyclingTip = recyclingTipService.saveRecyclingTip(recyclingTip);
-        return new ResponseEntity<>(savedRecyclingTip, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedRecyclingTip);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRecyclingTip(@PathVariable("id") Long id) {
-        recyclingTipService.deleteRecyclingTip(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<String> deleteRecyclingTip(@PathVariable Long id) {
+        try {
+            recyclingTipService.deleteRecyclingTip(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public class ResourceNotFoundException extends RuntimeException {
+        public ResourceNotFoundException(String message) {
+            super(message);
+        }
+    }
 }

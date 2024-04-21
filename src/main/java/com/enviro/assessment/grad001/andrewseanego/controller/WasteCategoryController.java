@@ -23,26 +23,44 @@ public class WasteCategoryController {
     @GetMapping
     public ResponseEntity<List<WasteCategory>> getAllWasteCategories() {
         List<WasteCategory> wasteCategories = wasteCategoryService.getAllWasteCategories();
-        return new ResponseEntity<>(wasteCategories, HttpStatus.OK);
+        return ResponseEntity.ok(wasteCategories);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WasteCategory> getWasteCategoryById(@PathVariable("id") Long id) {
-        Optional<WasteCategory> wasteCategory = wasteCategoryService.getWasteCategoryById(id);
-        return wasteCategory.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<?> getWasteCategoryById(@PathVariable Long id) {
+        try {
+            Optional<WasteCategory> optionalWasteCategory = wasteCategoryService.getWasteCategoryById(id);
+            WasteCategory wasteCategory = optionalWasteCategory.orElseThrow(() -> new ResourceNotFoundException("Waste Category not found with id: " + id));
+            return ResponseEntity.ok(wasteCategory);
+        } catch (ResourceNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
     }
 
     @PostMapping
     public ResponseEntity<WasteCategory> saveWasteCategory(@RequestBody WasteCategory wasteCategory) {
         WasteCategory savedWasteCategory = wasteCategoryService.saveWasteCategory(wasteCategory);
-        return new ResponseEntity<>(savedWasteCategory, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedWasteCategory);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteWasteCategory(@PathVariable("id") Long id) {
-        wasteCategoryService.deleteWasteCategory(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<String> deleteWasteCategory(@PathVariable Long id) {
+        try {
+            wasteCategoryService.deleteWasteCategory(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public class ResourceNotFoundException extends RuntimeException {
+        public ResourceNotFoundException(String message) {
+            super(message);
+        }
+    }
 }

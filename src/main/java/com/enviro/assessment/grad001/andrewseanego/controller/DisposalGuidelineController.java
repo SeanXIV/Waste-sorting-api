@@ -23,25 +23,44 @@ public class DisposalGuidelineController {
     @GetMapping
     public ResponseEntity<List<DisposalGuideline>> getAllDisposalGuidelines() {
         List<DisposalGuideline> disposalGuidelines = disposalGuidelineService.getAllDisposalGuidelines();
-        return new ResponseEntity<>(disposalGuidelines, HttpStatus.OK);
+        return ResponseEntity.ok(disposalGuidelines);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DisposalGuideline> getDisposalGuidelineById(@PathVariable("id") Long id) {
-        Optional<DisposalGuideline> disposalGuideline = disposalGuidelineService.getDisposalGuidelineById(id);
-        return disposalGuideline.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<?> getDisposalGuidelineById(@PathVariable Long id) {
+        try {
+            Optional<DisposalGuideline> optionalDisposalGuideline = disposalGuidelineService.getDisposalGuidelineById(id);
+            DisposalGuideline disposalGuideline = optionalDisposalGuideline.orElseThrow(() -> new ResourceNotFoundException("Disposal Guideline not found with id: " + id));
+            return ResponseEntity.ok(disposalGuideline);
+        } catch (ResourceNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
     }
 
     @PostMapping
     public ResponseEntity<DisposalGuideline> saveDisposalGuideline(@RequestBody DisposalGuideline disposalGuideline) {
         DisposalGuideline savedDisposalGuideline = disposalGuidelineService.saveDisposalGuideline(disposalGuideline);
-        return new ResponseEntity<>(savedDisposalGuideline, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedDisposalGuideline);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDisposalGuideline(@PathVariable("id") Long id) {
-        disposalGuidelineService.deleteDisposalGuideline(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<String> deleteDisposalGuideline(@PathVariable Long id) {
+        try {
+            disposalGuidelineService.deleteDisposalGuideline(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public class ResourceNotFoundException extends RuntimeException {
+        public ResourceNotFoundException(String message) {
+            super(message);
+        }
     }
 }
