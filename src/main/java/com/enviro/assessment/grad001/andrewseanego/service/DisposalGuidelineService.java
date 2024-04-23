@@ -33,5 +33,4 @@ public class DisposalGuidelineService {
         disposalGuidelineRepository.deleteById(id);
     }
 
-    // Other service methods as needed
 }

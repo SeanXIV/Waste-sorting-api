@@ -6,6 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface WasteCategoryRepository extends JpaRepository<WasteCategory, Long> {
     // The JpaRepository interface already provides a set of CRUD methods for interacting with the database
 
-
-    // add custom query methods here if needed
 }

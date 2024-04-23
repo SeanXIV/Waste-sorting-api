@@ -6,7 +6,7 @@ This project is a Waste Management System API that provides endpoints for managi
 
 ## Technologies Used
 
-- Java
+- Java 17
 - Spring Boot
 - H2 Database
 - Maven

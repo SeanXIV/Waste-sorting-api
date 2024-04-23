@@ -33,5 +33,4 @@ public class RecyclingTipService {
         recyclingTipRepository.deleteById(id);
     }
 
-    // Other service methods as needed
 }

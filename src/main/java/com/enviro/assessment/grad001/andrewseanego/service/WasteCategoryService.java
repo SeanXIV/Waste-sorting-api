@@ -33,5 +33,4 @@ public class WasteCategoryService {
         wasteCategoryRepository.deleteById(id);
     }
 
-    // Other service methods as needed
 }
