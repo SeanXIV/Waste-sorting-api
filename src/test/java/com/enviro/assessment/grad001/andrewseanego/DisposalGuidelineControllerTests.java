@@ -2,6 +2,8 @@ package com.enviro.assessment.grad001.andrewseanego;
 
 import com.enviro.assessment.grad001.andrewseanego.controller.DisposalGuidelineController;
 import com.enviro.assessment.grad001.andrewseanego.entity.DisposalGuideline;
+//import com.enviro.assessment.grad001.andrewseanego.exception.ResourceNotFoundException;
+import com.enviro.assessment.grad001.andrewseanego.exception.ValidationException;
 import com.enviro.assessment.grad001.andrewseanego.service.DisposalGuidelineService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,13 +72,16 @@ public class DisposalGuidelineControllerTests {
 
 	@Test
 	public void testSaveDisposalGuideline() {
+		// Create a mock BindingResult
+		BindingResult bindingResult = mock(BindingResult.class);
+
 		DisposalGuideline guideline = new DisposalGuideline();
 		guideline.setId(1L);
 		guideline.setDescription("Guideline 1");
 
 		when(disposalGuidelineService.saveDisposalGuideline(guideline)).thenReturn(guideline);
 
-		ResponseEntity<DisposalGuideline> responseEntity = disposalGuidelineController.saveDisposalGuideline(guideline);
+		ResponseEntity<DisposalGuideline> responseEntity = disposalGuidelineController.saveDisposalGuideline(guideline, bindingResult);
 		assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
 		assertEquals(guideline, responseEntity.getBody());
 	}
@@ -86,4 +92,14 @@ public class DisposalGuidelineControllerTests {
 		assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
 		verify(disposalGuidelineService, times(1)).deleteDisposalGuideline(1L);
 	}
+
+	@Test
+	public void testHandleValidationException() {
+		ValidationException ex = new ValidationException("Validation error");
+
+		ResponseEntity<String> responseEntity = disposalGuidelineController.handleValidationException(ex);
+		assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+		assertEquals("Validation error", responseEntity.getBody());
+	}
+
 }

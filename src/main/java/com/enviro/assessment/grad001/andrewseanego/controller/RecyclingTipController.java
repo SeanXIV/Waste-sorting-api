@@ -1,17 +1,22 @@
 package com.enviro.assessment.grad001.andrewseanego.controller;
 
 import com.enviro.assessment.grad001.andrewseanego.entity.RecyclingTip;
+import com.enviro.assessment.grad001.andrewseanego.exception.ValidationException;
 import com.enviro.assessment.grad001.andrewseanego.service.RecyclingTipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/recycling-tips")
+@Validated
 public class RecyclingTipController {
     private final RecyclingTipService recyclingTipService;
 
@@ -40,7 +45,10 @@ public class RecyclingTipController {
     }
 
     @PostMapping
-    public ResponseEntity<RecyclingTip> saveRecyclingTip(@RequestBody RecyclingTip recyclingTip) {
+    public ResponseEntity<RecyclingTip> saveRecyclingTip(@Valid @RequestBody RecyclingTip recyclingTip, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(bindingResult.getAllErrors().get(0).getDefaultMessage());
+        }
         RecyclingTip savedRecyclingTip = recyclingTipService.saveRecyclingTip(recyclingTip);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedRecyclingTip);
     }
@@ -62,5 +70,11 @@ public class RecyclingTipController {
         public ResourceNotFoundException(String message) {
             super(message);
         }
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleValidationException(ValidationException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 }

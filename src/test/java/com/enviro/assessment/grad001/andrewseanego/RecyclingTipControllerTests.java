@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,13 +70,16 @@ public class RecyclingTipControllerTests {
 
     @Test
     public void testSaveRecyclingTip() {
+        // Creating a mock BindingResult
+        BindingResult bindingResult = mock(BindingResult.class);
+
         RecyclingTip tip = new RecyclingTip();
         tip.setId(1L);
         tip.setTitle("Tip 1");
 
         when(recyclingTipService.saveRecyclingTip(tip)).thenReturn(tip);
 
-        ResponseEntity<RecyclingTip> responseEntity = recyclingTipController.saveRecyclingTip(tip);
+        ResponseEntity<RecyclingTip> responseEntity = recyclingTipController.saveRecyclingTip(tip, bindingResult);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         assertEquals(tip, responseEntity.getBody());
     }

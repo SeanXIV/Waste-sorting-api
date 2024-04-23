@@ -3,21 +3,23 @@ package com.enviro.assessment.grad001.andrewseanego;
 import com.enviro.assessment.grad001.andrewseanego.controller.WasteCategoryController;
 import com.enviro.assessment.grad001.andrewseanego.entity.WasteCategory;
 import com.enviro.assessment.grad001.andrewseanego.service.WasteCategoryService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class WasteCategoryControllerTests {
 
     @Mock
@@ -25,11 +27,6 @@ public class WasteCategoryControllerTests {
 
     @InjectMocks
     WasteCategoryController wasteCategoryController;
-
-    @BeforeEach
-    public void init() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     public void testGetAllWasteCategories() {
@@ -69,21 +66,46 @@ public class WasteCategoryControllerTests {
 
     @Test
     public void testSaveWasteCategory() {
+        // Creating a mock BindingResult
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        // Creating a test WasteCategory
         WasteCategory category = new WasteCategory();
         category.setId(1L);
         category.setName("Category 1");
 
-        when(wasteCategoryService.saveWasteCategory(category)).thenReturn(category);
+        // Mocking the behavior of wasteCategoryService.saveWasteCategory
+        when(wasteCategoryService.saveWasteCategory(any())).thenReturn(category);
 
-        ResponseEntity<WasteCategory> responseEntity = wasteCategoryController.saveWasteCategory(category);
+        // Calling the controller method with the test WasteCategory and BindingResult
+        ResponseEntity<WasteCategory> responseEntity = wasteCategoryController.saveWasteCategory(category, bindingResult);
+
+        // Assertions
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         assertEquals(category, responseEntity.getBody());
     }
 
     @Test
     public void testDeleteWasteCategory() {
+        doNothing().when(wasteCategoryService).deleteWasteCategory(anyLong());
+
         ResponseEntity<String> responseEntity = wasteCategoryController.deleteWasteCategory(1L);
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
         verify(wasteCategoryService, times(1)).deleteWasteCategory(1L);
+    }
+
+    @Test
+    public void testDeleteWasteCategory_Exception() {
+        // Mock behavior to throw RuntimeException
+        doThrow(RuntimeException.class).when(wasteCategoryService).deleteWasteCategory(anyLong());
+
+        // Call the controller method and assert the exception
+        ResponseEntity<String> responseEntity = wasteCategoryController.deleteWasteCategory(1L);
+
+        // Verify that the service method was called
+        verify(wasteCategoryService, times(1)).deleteWasteCategory(1L);
+
+        // Assert the response status code
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
     }
 }
