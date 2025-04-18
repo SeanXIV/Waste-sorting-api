@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RecyclingTipRepository extends MongoRepository<RecyclingTip, String> {
     // The JpaRepository interface already provides a set of CRUD methods for interacting with the database
@@ -44,5 +45,16 @@ public interface RecyclingTipRepository extends MongoRepository<RecyclingTip, St
             description,
             source
         );
+    }
+
+    // For backward compatibility with controllers still using Long
+    default Optional<RecyclingTip> findById(Long id) {
+        return id == null ? Optional.empty() : findById(id.toString());
+    }
+
+    default void deleteById(Long id) {
+        if (id != null) {
+            deleteById(id.toString());
+        }
     }
 }
