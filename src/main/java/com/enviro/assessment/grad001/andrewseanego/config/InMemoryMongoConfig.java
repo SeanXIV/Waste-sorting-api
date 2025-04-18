@@ -13,7 +13,7 @@ import java.io.IOException;
 
 @Configuration
 @EnableMongoRepositories(basePackages = "com.enviro.assessment.grad001.andrewseanego.repository")
-@Profile("render")
+@Profile("fallback")
 public class InMemoryMongoConfig {
 
     private static final String DATABASE_NAME = "waste_management";

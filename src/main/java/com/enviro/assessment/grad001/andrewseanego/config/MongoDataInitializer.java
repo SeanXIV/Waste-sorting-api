@@ -6,12 +6,10 @@ import com.enviro.assessment.grad001.andrewseanego.entity.WasteCategory;
 import com.enviro.assessment.grad001.andrewseanego.repository.RoleRepository;
 import com.enviro.assessment.grad001.andrewseanego.repository.WasteCategoryRepository;
 import com.mongodb.MongoException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.UncategorizedMongoDbException;
+import org.springframework.dao.DataAccessException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,8 +17,7 @@ import java.util.List;
 @Configuration
 public class MongoDataInitializer {
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    // No need for MongoTemplate as we're using repositories directly
 
     @Bean
     public CommandLineRunner initDatabase(RoleRepository roleRepository,
@@ -84,7 +81,7 @@ public class MongoDataInitializer {
                 wasteCategoryRepository.saveAll(Arrays.asList(plastic, paper, glass, metal, organic, electronic, hazardous));
                 System.out.println("Waste categories initialized");
             }
-            } catch (MongoException | UncategorizedMongoDbException e) {
+            } catch (MongoException | DataAccessException e) {
                 System.err.println("MongoDB connection error: " + e.getMessage());
                 System.err.println("The application will continue to run without database initialization.");
                 System.err.println("Please check your MongoDB connection settings.");
