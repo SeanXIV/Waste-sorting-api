@@ -29,16 +29,26 @@ public class WasteCollectionService {
         return wasteCollectionRepository.findAll(pageable);
     }
 
-    public Optional<WasteCollection> getWasteCollectionById(Long id) {
+    public Optional<WasteCollection> getWasteCollectionById(String id) {
         return wasteCollectionRepository.findById(id);
+    }
+
+    // For backward compatibility with controllers still using Long
+    public Optional<WasteCollection> getWasteCollectionById(Long id) {
+        return wasteCollectionRepository.findById(id.toString());
     }
 
     public WasteCollection saveWasteCollection(WasteCollection wasteCollection) {
         return wasteCollectionRepository.save(wasteCollection);
     }
 
-    public void deleteWasteCollection(Long id) {
+    public void deleteWasteCollection(String id) {
         wasteCollectionRepository.deleteById(id);
+    }
+
+    // For backward compatibility with controllers still using Long
+    public void deleteWasteCollection(Long id) {
+        wasteCollectionRepository.deleteById(id.toString());
     }
 
     // Search methods
@@ -74,13 +84,29 @@ public class WasteCollectionService {
         return wasteCollectionRepository.findByCollectionDateBetween(startDate, endDate, pageable);
     }
 
-    public List<WasteCollection> searchWasteCollections(Long wasteCategoryId, String location, String status, 
+    public List<WasteCollection> searchWasteCollections(String wasteCategoryId, String location, String status,
                                                        LocalDateTime startDate, LocalDateTime endDate) {
         return wasteCollectionRepository.searchWasteCollections(wasteCategoryId, location, status, startDate, endDate);
     }
 
-    public Page<WasteCollection> searchWasteCollections(Long wasteCategoryId, String location, String status, 
+    // For backward compatibility with controllers still using Long
+    public List<WasteCollection> searchWasteCollections(Long wasteCategoryId, String location, String status,
+                                                       LocalDateTime startDate, LocalDateTime endDate) {
+        return wasteCollectionRepository.searchWasteCollections(
+            wasteCategoryId != null ? wasteCategoryId.toString() : null,
+            location, status, startDate, endDate);
+    }
+
+    public Page<WasteCollection> searchWasteCollections(String wasteCategoryId, String location, String status,
                                                        LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
         return wasteCollectionRepository.searchWasteCollections(wasteCategoryId, location, status, startDate, endDate, pageable);
+    }
+
+    // For backward compatibility with controllers still using Long
+    public Page<WasteCollection> searchWasteCollections(Long wasteCategoryId, String location, String status,
+                                                       LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
+        return wasteCollectionRepository.searchWasteCollections(
+            wasteCategoryId != null ? wasteCategoryId.toString() : null,
+            location, status, startDate, endDate, pageable);
     }
 }

@@ -1,9 +1,11 @@
 package com.enviro.assessment.grad001.andrewseanego.entity;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -12,13 +14,12 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Document(collection = "waste_collections")
 public class WasteCollection {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @ManyToOne
+    @DocumentReference
     @NotNull(message = "Waste category must be provided")
     private WasteCategory wasteCategory;
 
@@ -33,7 +34,6 @@ public class WasteCollection {
     @Size(max = 50, message = "Status cannot exceed 50 characters")
     private String status;
 
-    @Column(columnDefinition = "TEXT")
     private String notes;
 
     @NotNull(message = "Quantity must be provided")

@@ -1,22 +1,19 @@
 package com.enviro.assessment.grad001.andrewseanego.entity;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "roles")
+@Document(collection = "roles")
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private String id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
     private ERole name;
 
     public Role(ERole name) {

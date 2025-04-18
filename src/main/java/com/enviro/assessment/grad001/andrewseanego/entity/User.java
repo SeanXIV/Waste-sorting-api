@@ -1,9 +1,12 @@
 package com.enviro.assessment.grad001.andrewseanego.entity;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -13,20 +16,17 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "users", 
-       uniqueConstraints = {
-           @UniqueConstraint(columnNames = "username"),
-           @UniqueConstraint(columnNames = "email")
-       })
+@Document(collection = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
+    @Indexed(unique = true)
     @NotBlank(message = "Username is required")
     @Size(max = 20, message = "Username cannot exceed 20 characters")
     private String username;
+
+    @Indexed(unique = true)
 
     @NotBlank(message = "Email is required")
     @Size(max = 50, message = "Email cannot exceed 50 characters")
@@ -37,10 +37,7 @@ public class User {
     @Size(max = 120, message = "Password cannot exceed 120 characters")
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles", 
-               joinColumns = @JoinColumn(name = "user_id"),
-               inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @DocumentReference
     private Set<Role> roles = new HashSet<>();
 
     public User(String username, String email, String password) {

@@ -27,16 +27,26 @@ public class WasteCategoryService {
         return wasteCategoryRepository.findAll(pageable);
     }
 
-    public Optional<WasteCategory> getWasteCategoryById(Long id) {
+    public Optional<WasteCategory> getWasteCategoryById(String id) {
         return wasteCategoryRepository.findById(id);
+    }
+
+    // For backward compatibility with controllers still using Long
+    public Optional<WasteCategory> getWasteCategoryById(Long id) {
+        return wasteCategoryRepository.findById(id.toString());
     }
 
     public WasteCategory saveWasteCategory(WasteCategory wasteCategory) {
         return wasteCategoryRepository.save(wasteCategory);
     }
 
-    public void deleteWasteCategory(Long id) {
+    public void deleteWasteCategory(String id) {
         wasteCategoryRepository.deleteById(id);
+    }
+
+    // For backward compatibility with controllers still using Long
+    public void deleteWasteCategory(Long id) {
+        wasteCategoryRepository.deleteById(id.toString());
     }
 
     // Search methods
