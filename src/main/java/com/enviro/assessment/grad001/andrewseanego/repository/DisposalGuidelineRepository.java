@@ -2,13 +2,14 @@ package com.enviro.assessment.grad001.andrewseanego.repository;
 
 import com.enviro.assessment.grad001.andrewseanego.entity.DisposalGuideline;
 import com.enviro.assessment.grad001.andrewseanego.entity.WasteCategory;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+import java.util.Optional;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface DisposalGuidelineRepository extends JpaRepository<DisposalGuideline, Long> {
+public interface DisposalGuidelineRepository extends MongoRepository<DisposalGuideline, String> {
     // The JpaRepository interface already provides a set of CRUD methods for interacting with the database
 
     // Search methods
@@ -20,15 +21,41 @@ public interface DisposalGuidelineRepository extends JpaRepository<DisposalGuide
 
     List<DisposalGuideline> findByLegalRequirementsContainingIgnoreCase(String legalRequirements);
 
-    @Query("SELECT d FROM DisposalGuideline d WHERE " +
-           "(:wasteCategoryId IS NULL OR d.wasteCategory.id = :wasteCategoryId) AND " +
-           "(:description IS NULL OR LOWER(d.description) LIKE LOWER(CONCAT('%', :description, '%'))) AND " +
-           "(:steps IS NULL OR LOWER(d.steps) LIKE LOWER(CONCAT('%', :steps, '%'))) AND " +
-           "(:legalRequirements IS NULL OR LOWER(d.legalRequirements) LIKE LOWER(CONCAT('%', :legalRequirements, '%')))")
+    @Query("{ $and: [ " +
+           "{ $or: [ { 'wasteCategory._id': { $exists: false } }, { 'wasteCategory._id': ?0 } ] }, " +
+           "{ $or: [ { 'description': { $exists: false } }, { 'description': { $regex: ?1, $options: 'i' } } ] }, " +
+           "{ $or: [ { 'steps': { $exists: false } }, { 'steps': { $regex: ?2, $options: 'i' } } ] }, " +
+           "{ $or: [ { 'legalRequirements': { $exists: false } }, { 'legalRequirements': { $regex: ?3, $options: 'i' } } ] } " +
+           "] }")
     List<DisposalGuideline> searchDisposalGuidelines(
-            @Param("wasteCategoryId") Long wasteCategoryId,
+            @Param("wasteCategoryId") String wasteCategoryId,
             @Param("description") String description,
             @Param("steps") String steps,
             @Param("legalRequirements") String legalRequirements);
+
+    // For backward compatibility with controllers still using Long
+    default List<DisposalGuideline> searchDisposalGuidelines(
+            Long wasteCategoryId,
+            String description,
+            String steps,
+            String legalRequirements) {
+        return searchDisposalGuidelines(
+            wasteCategoryId != null ? wasteCategoryId.toString() : null,
+            description,
+            steps,
+            legalRequirements
+        );
+    }
+
+    // For backward compatibility with controllers still using Long
+    default Optional<DisposalGuideline> findById(Long id) {
+        return id == null ? Optional.empty() : findById(id.toString());
+    }
+
+    default void deleteById(Long id) {
+        if (id != null) {
+            deleteById(id.toString());
+        }
+    }
 }
 

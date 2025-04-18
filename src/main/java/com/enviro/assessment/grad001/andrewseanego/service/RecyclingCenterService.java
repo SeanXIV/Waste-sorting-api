@@ -28,16 +28,28 @@ public class RecyclingCenterService {
         return recyclingCenterRepository.findAll(pageable);
     }
 
-    public Optional<RecyclingCenter> getRecyclingCenterById(Long id) {
+    public Optional<RecyclingCenter> getRecyclingCenterById(String id) {
         return recyclingCenterRepository.findById(id);
+    }
+
+    // For backward compatibility with controllers still using Long
+    public Optional<RecyclingCenter> getRecyclingCenterById(Long id) {
+        return id == null ? Optional.empty() : recyclingCenterRepository.findById(id.toString());
     }
 
     public RecyclingCenter saveRecyclingCenter(RecyclingCenter recyclingCenter) {
         return recyclingCenterRepository.save(recyclingCenter);
     }
 
-    public void deleteRecyclingCenter(Long id) {
+    public void deleteRecyclingCenter(String id) {
         recyclingCenterRepository.deleteById(id);
+    }
+
+    // For backward compatibility with controllers still using Long
+    public void deleteRecyclingCenter(Long id) {
+        if (id != null) {
+            recyclingCenterRepository.deleteById(id.toString());
+        }
     }
 
     // Search methods

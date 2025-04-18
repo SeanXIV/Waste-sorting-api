@@ -22,16 +22,28 @@ public class RecyclingTipService {
         return recyclingTipRepository.findAll();
     }
 
-    public Optional<RecyclingTip> getRecyclingTipById(Long id) {
+    public Optional<RecyclingTip> getRecyclingTipById(String id) {
         return recyclingTipRepository.findById(id);
+    }
+
+    // For backward compatibility with controllers still using Long
+    public Optional<RecyclingTip> getRecyclingTipById(Long id) {
+        return id == null ? Optional.empty() : recyclingTipRepository.findById(id.toString());
     }
 
     public RecyclingTip saveRecyclingTip(RecyclingTip recyclingTip) {
         return recyclingTipRepository.save(recyclingTip);
     }
 
-    public void deleteRecyclingTip(Long id) {
+    public void deleteRecyclingTip(String id) {
         recyclingTipRepository.deleteById(id);
+    }
+
+    // For backward compatibility with controllers still using Long
+    public void deleteRecyclingTip(Long id) {
+        if (id != null) {
+            recyclingTipRepository.deleteById(id.toString());
+        }
     }
 
     // Search methods

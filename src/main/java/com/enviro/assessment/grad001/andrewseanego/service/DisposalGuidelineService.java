@@ -22,16 +22,28 @@ public class DisposalGuidelineService {
         return disposalGuidelineRepository.findAll();
     }
 
-    public Optional<DisposalGuideline> getDisposalGuidelineById(Long id) {
+    public Optional<DisposalGuideline> getDisposalGuidelineById(String id) {
         return disposalGuidelineRepository.findById(id);
+    }
+
+    // For backward compatibility with controllers still using Long
+    public Optional<DisposalGuideline> getDisposalGuidelineById(Long id) {
+        return id == null ? Optional.empty() : disposalGuidelineRepository.findById(id.toString());
     }
 
     public DisposalGuideline saveDisposalGuideline(DisposalGuideline disposalGuideline) {
         return disposalGuidelineRepository.save(disposalGuideline);
     }
 
-    public void deleteDisposalGuideline(Long id) {
+    public void deleteDisposalGuideline(String id) {
         disposalGuidelineRepository.deleteById(id);
+    }
+
+    // For backward compatibility with controllers still using Long
+    public void deleteDisposalGuideline(Long id) {
+        if (id != null) {
+            disposalGuidelineRepository.deleteById(id.toString());
+        }
     }
 
     // Search methods

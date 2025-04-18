@@ -1,9 +1,11 @@
 package com.enviro.assessment.grad001.andrewseanego.entity;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -11,13 +13,12 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Document(collection = "recycling_tips")
 public class RecyclingTip {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @ManyToOne
+    @DocumentReference
     @NotNull(message = "Waste category must be provided")
     private WasteCategory wasteCategory;
 
@@ -26,7 +27,6 @@ public class RecyclingTip {
     private String title;
 
     @NotBlank(message = "Description cannot be blank")
-    @Column(columnDefinition = "TEXT")
     private String description;
 
     @NotBlank(message = "Source cannot be blank")
