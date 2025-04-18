@@ -9,7 +9,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.lang.NonNull;
 
 @Configuration
 @EnableMongoRepositories(basePackages = "com.enviro.assessment.grad001.andrewseanego.repository")
@@ -19,26 +21,40 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     private String mongoUri;
 
     @Override
+    @NonNull
     protected String getDatabaseName() {
-        // Extract database name from URI
+        // Extract database name from URI or use default
         String dbName = "waste_management"; // Default name
-        
+
         if (mongoUri != null && !mongoUri.isEmpty()) {
-            int lastSlashIndex = mongoUri.lastIndexOf('/');
-            if (lastSlashIndex != -1 && lastSlashIndex < mongoUri.length() - 1) {
-                dbName = mongoUri.substring(lastSlashIndex + 1);
-                // Remove query parameters if any
-                int queryParamIndex = dbName.indexOf('?');
-                if (queryParamIndex != -1) {
-                    dbName = dbName.substring(0, queryParamIndex);
+            try {
+                ConnectionString connectionString = new ConnectionString(mongoUri);
+                String extractedDbName = connectionString.getDatabase();
+                if (extractedDbName != null && !extractedDbName.isEmpty()) {
+                    dbName = extractedDbName;
+                }
+            } catch (Exception e) {
+                // Fallback to manual parsing if ConnectionString parsing fails
+                int lastSlashIndex = mongoUri.lastIndexOf('/');
+                if (lastSlashIndex != -1 && lastSlashIndex < mongoUri.length() - 1) {
+                    String potentialDbName = mongoUri.substring(lastSlashIndex + 1);
+                    // Remove query parameters if any
+                    int queryParamIndex = potentialDbName.indexOf('?');
+                    if (queryParamIndex != -1) {
+                        potentialDbName = potentialDbName.substring(0, queryParamIndex);
+                    }
+                    if (!potentialDbName.isEmpty()) {
+                        dbName = potentialDbName;
+                    }
                 }
             }
         }
-        
+
         return dbName;
     }
 
     @Override
+    @NonNull
     public MongoClient mongoClient() {
         ConnectionString connectionString = new ConnectionString(mongoUri);
         MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
@@ -49,6 +65,8 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
 
     @Bean
     public MongoTemplate mongoTemplate() {
-        return new MongoTemplate(mongoClient(), getDatabaseName());
+        // Use CustomMongoClientFactory to ensure database name is set
+        SimpleMongoClientDatabaseFactory factory = new CustomMongoClientFactory(mongoUri);
+        return new MongoTemplate(factory);
     }
 }
