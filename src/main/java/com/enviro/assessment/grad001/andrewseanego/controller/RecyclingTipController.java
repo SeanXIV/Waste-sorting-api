@@ -84,7 +84,7 @@ public class RecyclingTipController {
                 throw new ResourceNotFoundException("Recycling Tip not found with id: " + id);
             }
 
-            recyclingTip.setId(id); // Ensure the ID is set correctly
+            recyclingTip.setId(id.toString()); // Ensure the ID is set correctly
             RecyclingTip updatedRecyclingTip = recyclingTipService.saveRecyclingTip(recyclingTip);
             return ResponseEntity.ok(updatedRecyclingTip);
         } catch (ResourceNotFoundException ex) {

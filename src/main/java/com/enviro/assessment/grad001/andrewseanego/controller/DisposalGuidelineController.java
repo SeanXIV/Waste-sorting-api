@@ -83,7 +83,7 @@ public class DisposalGuidelineController {
                 throw new ResourceNotFoundException("Disposal Guideline not found with id: " + id);
             }
 
-            disposalGuideline.setId(id); // Ensure the ID is set correctly
+            disposalGuideline.setId(id.toString()); // Ensure the ID is set correctly
             DisposalGuideline updatedDisposalGuideline = disposalGuidelineService.saveDisposalGuideline(disposalGuideline);
             return ResponseEntity.ok(updatedDisposalGuideline);
         } catch (ResourceNotFoundException ex) {

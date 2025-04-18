@@ -124,7 +124,7 @@ public class WasteCollectionController {
                 throw new ResourceNotFoundException("Waste Collection not found with id: " + id);
             }
 
-            wasteCollection.setId(id); // Ensure the ID is set correctly
+            wasteCollection.setId(id.toString()); // Ensure the ID is set correctly
             WasteCollection updatedWasteCollection = wasteCollectionService.saveWasteCollection(wasteCollection);
             return ResponseEntity.ok(updatedWasteCollection);
         } catch (ResourceNotFoundException ex) {

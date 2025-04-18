@@ -64,13 +64,13 @@ public class RecyclingCenterController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir) {
-        
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? 
+
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        
+
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<RecyclingCenter> recyclingCenters = recyclingCenterService.getAllRecyclingCenters(pageable);
-        
+
         return ResponseEntity.ok(recyclingCenters);
     }
 
@@ -116,13 +116,13 @@ public class RecyclingCenterController {
             if (bindingResult.hasErrors()) {
                 throw new ValidationException(bindingResult.getAllErrors().get(0).getDefaultMessage());
             }
-            
+
             Optional<RecyclingCenter> optionalRecyclingCenter = recyclingCenterService.getRecyclingCenterById(id);
             if (!optionalRecyclingCenter.isPresent()) {
                 throw new ResourceNotFoundException("Recycling Center not found with id: " + id);
             }
-            
-            recyclingCenter.setId(id); // Ensure the ID is set correctly
+
+            recyclingCenter.setId(id.toString()); // Ensure the ID is set correctly
             RecyclingCenter updatedRecyclingCenter = recyclingCenterService.saveRecyclingCenter(recyclingCenter);
             return ResponseEntity.ok(updatedRecyclingCenter);
         } catch (ResourceNotFoundException ex) {
@@ -142,9 +142,9 @@ public class RecyclingCenterController {
             if (!optionalRecyclingCenter.isPresent()) {
                 throw new ResourceNotFoundException("Recycling Center not found with id: " + id);
             }
-            
+
             RecyclingCenter existingRecyclingCenter = optionalRecyclingCenter.get();
-            
+
             // Apply updates to the existing recycling center
             if (updates.containsKey("name")) {
                 existingRecyclingCenter.setName((String) updates.get("name"));
@@ -164,7 +164,7 @@ public class RecyclingCenterController {
             if (updates.containsKey("active")) {
                 existingRecyclingCenter.setActive((Boolean) updates.get("active"));
             }
-            
+
             RecyclingCenter updatedRecyclingCenter = recyclingCenterService.saveRecyclingCenter(existingRecyclingCenter);
             return ResponseEntity.ok(updatedRecyclingCenter);
         } catch (ResourceNotFoundException ex) {
@@ -209,13 +209,13 @@ public class RecyclingCenterController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir) {
-        
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? 
+
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        
+
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<RecyclingCenter> recyclingCenters = recyclingCenterService.searchRecyclingCenters(name, address, active, pageable);
-        
+
         return ResponseEntity.ok(recyclingCenters);
     }
 
@@ -226,7 +226,7 @@ public class RecyclingCenterController {
             // First, get the waste category by ID
             WasteCategory wasteCategory = wasteCategoryService.getWasteCategoryById(wasteCategoryId)
                     .orElseThrow(() -> new ResourceNotFoundException("Waste Category not found with id: " + wasteCategoryId));
-            
+
             List<RecyclingCenter> recyclingCenters = recyclingCenterService.findByAcceptedWasteCategory(wasteCategory);
             return ResponseEntity.ok(recyclingCenters);
         } catch (ResourceNotFoundException ex) {

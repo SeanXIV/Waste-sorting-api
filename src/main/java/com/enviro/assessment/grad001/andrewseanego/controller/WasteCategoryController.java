@@ -125,7 +125,7 @@ public class WasteCategoryController {
                 throw new ResourceNotFoundException("Waste Category not found with id: " + id);
             }
 
-            wasteCategory.setId(id); // Ensure the ID is set correctly
+            wasteCategory.setId(id.toString()); // Ensure the ID is set correctly
             WasteCategory updatedWasteCategory = wasteCategoryService.saveWasteCategory(wasteCategory);
             return ResponseEntity.ok(updatedWasteCategory);
         } catch (ResourceNotFoundException ex) {
