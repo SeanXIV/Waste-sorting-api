@@ -1,6 +1,7 @@
 package com.enviro.assessment.grad001.andrewseanego.service;
 
 import com.enviro.assessment.grad001.andrewseanego.entity.DisposalGuideline;
+import com.enviro.assessment.grad001.andrewseanego.entity.WasteCategory;
 import com.enviro.assessment.grad001.andrewseanego.repository.DisposalGuidelineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,4 +34,24 @@ public class DisposalGuidelineService {
         disposalGuidelineRepository.deleteById(id);
     }
 
+    // Search methods
+    public List<DisposalGuideline> findByWasteCategory(WasteCategory wasteCategory) {
+        return disposalGuidelineRepository.findByWasteCategory(wasteCategory);
+    }
+
+    public List<DisposalGuideline> findByDescription(String description) {
+        return disposalGuidelineRepository.findByDescriptionContainingIgnoreCase(description);
+    }
+
+    public List<DisposalGuideline> findBySteps(String steps) {
+        return disposalGuidelineRepository.findByStepsContainingIgnoreCase(steps);
+    }
+
+    public List<DisposalGuideline> findByLegalRequirements(String legalRequirements) {
+        return disposalGuidelineRepository.findByLegalRequirementsContainingIgnoreCase(legalRequirements);
+    }
+
+    public List<DisposalGuideline> searchDisposalGuidelines(Long wasteCategoryId, String description, String steps, String legalRequirements) {
+        return disposalGuidelineRepository.searchDisposalGuidelines(wasteCategoryId, description, steps, legalRequirements);
+    }
 }
