@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableMethodSecurity
@@ -25,6 +26,9 @@ public class WebSecurityConfig {
 
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
+
+    @Autowired
+    private CorsFilter corsFilter;
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -61,11 +65,20 @@ public class WebSecurityConfig {
                     .requestMatchers("/api-docs/**").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/swagger-ui.html").permitAll()
+                    .requestMatchers("/h2-console/**").permitAll() // Allow H2 console access
                     .anyRequest().authenticated()
             );
 
+        // Allow frames for H2 console
+        http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
+
         http.authenticationProvider(authenticationProvider());
+
+        // Add JWT filter
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        // Add CORS filter
+        http.addFilterBefore(corsFilter, AuthTokenFilter.class);
 
         return http.build();
     }
