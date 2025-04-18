@@ -36,7 +36,7 @@ public class RecyclingTipControllerTests {
     public void testGetAllRecyclingTips() {
         List<RecyclingTip> recyclingTips = new ArrayList<>();
         RecyclingTip tip1 = new RecyclingTip();
-        tip1.setId(1L);
+        tip1.setId("1");
         tip1.setTitle("Tip 1");
         recyclingTips.add(tip1);
 
@@ -50,21 +50,21 @@ public class RecyclingTipControllerTests {
     @Test
     public void testGetRecyclingTipById() {
         RecyclingTip tip = new RecyclingTip();
-        tip.setId(1L);
+        tip.setId("1");
         tip.setTitle("Tip 1");
 
-        when(recyclingTipService.getRecyclingTipById(1L)).thenReturn(Optional.of(tip));
+        when(recyclingTipService.getRecyclingTipById("1")).thenReturn(Optional.of(tip));
 
-        ResponseEntity<?> responseEntity = recyclingTipController.getRecyclingTipById(1L);
+        ResponseEntity<?> responseEntity = recyclingTipController.getRecyclingTipById("1");
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(tip, responseEntity.getBody());
     }
 
     @Test
     public void testGetRecyclingTipById_NotFound() {
-        when(recyclingTipService.getRecyclingTipById(1L)).thenReturn(Optional.empty());
+        when(recyclingTipService.getRecyclingTipById("1")).thenReturn(Optional.empty());
 
-        ResponseEntity<?> responseEntity = recyclingTipController.getRecyclingTipById(1L);
+        ResponseEntity<?> responseEntity = recyclingTipController.getRecyclingTipById("1");
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
@@ -74,7 +74,7 @@ public class RecyclingTipControllerTests {
         BindingResult bindingResult = mock(BindingResult.class);
 
         RecyclingTip tip = new RecyclingTip();
-        tip.setId(1L);
+        tip.setId("1");
         tip.setTitle("Tip 1");
 
         when(recyclingTipService.saveRecyclingTip(tip)).thenReturn(tip);
@@ -86,8 +86,8 @@ public class RecyclingTipControllerTests {
 
     @Test
     public void testDeleteRecyclingTip() {
-        ResponseEntity<String> responseEntity = recyclingTipController.deleteRecyclingTip(1L);
+        ResponseEntity<String> responseEntity = recyclingTipController.deleteRecyclingTip("1");
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
-        verify(recyclingTipService, times(1)).deleteRecyclingTip(1L);
+        verify(recyclingTipService, times(1)).deleteRecyclingTip("1");
     }
 }

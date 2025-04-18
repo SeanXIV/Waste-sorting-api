@@ -63,7 +63,17 @@ public class RecyclingTipService {
         return recyclingTipRepository.findBySourceContainingIgnoreCase(source);
     }
 
-    public List<RecyclingTip> searchRecyclingTips(Long wasteCategoryId, String title, String description, String source) {
+    public List<RecyclingTip> searchRecyclingTips(String wasteCategoryId, String title, String description, String source) {
         return recyclingTipRepository.searchRecyclingTips(wasteCategoryId, title, description, source);
+    }
+
+    // For backward compatibility with controllers still using Long
+    public List<RecyclingTip> searchRecyclingTips(Long wasteCategoryId, String title, String description, String source) {
+        return searchRecyclingTips(
+            wasteCategoryId != null ? wasteCategoryId.toString() : null,
+            title,
+            description,
+            source
+        );
     }
 }

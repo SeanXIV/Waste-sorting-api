@@ -32,7 +32,7 @@ public class WasteCategoryControllerTests {
     public void testGetAllWasteCategories() {
         List<WasteCategory> wasteCategories = new ArrayList<>();
         WasteCategory category1 = new WasteCategory();
-        category1.setId(1L);
+        category1.setId("1");
         category1.setName("Category 1");
         wasteCategories.add(category1);
 
@@ -46,21 +46,21 @@ public class WasteCategoryControllerTests {
     @Test
     public void testGetWasteCategoryById() {
         WasteCategory category = new WasteCategory();
-        category.setId(1L);
+        category.setId("1");
         category.setName("Category 1");
 
-        when(wasteCategoryService.getWasteCategoryById(1L)).thenReturn(Optional.of(category));
+        when(wasteCategoryService.getWasteCategoryById("1")).thenReturn(Optional.of(category));
 
-        ResponseEntity<?> responseEntity = wasteCategoryController.getWasteCategoryById(1L);
+        ResponseEntity<?> responseEntity = wasteCategoryController.getWasteCategoryById("1");
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(category, responseEntity.getBody());
     }
 
     @Test
     public void testGetWasteCategoryById_NotFound() {
-        when(wasteCategoryService.getWasteCategoryById(1L)).thenReturn(Optional.empty());
+        when(wasteCategoryService.getWasteCategoryById("1")).thenReturn(Optional.empty());
 
-        ResponseEntity<?> responseEntity = wasteCategoryController.getWasteCategoryById(1L);
+        ResponseEntity<?> responseEntity = wasteCategoryController.getWasteCategoryById("1");
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
@@ -71,7 +71,7 @@ public class WasteCategoryControllerTests {
 
         // Creating a test WasteCategory
         WasteCategory category = new WasteCategory();
-        category.setId(1L);
+        category.setId("1");
         category.setName("Category 1");
 
         // Mocking the behavior of wasteCategoryService.saveWasteCategory
@@ -87,23 +87,23 @@ public class WasteCategoryControllerTests {
 
     @Test
     public void testDeleteWasteCategory() {
-        doNothing().when(wasteCategoryService).deleteWasteCategory(anyLong());
+        doNothing().when(wasteCategoryService).deleteWasteCategory(anyString());
 
-        ResponseEntity<String> responseEntity = wasteCategoryController.deleteWasteCategory(1L);
+        ResponseEntity<String> responseEntity = wasteCategoryController.deleteWasteCategory("1");
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
-        verify(wasteCategoryService, times(1)).deleteWasteCategory(1L);
+        verify(wasteCategoryService, times(1)).deleteWasteCategory("1");
     }
 
     @Test
     public void testDeleteWasteCategory_Exception() {
         // Mock behavior to throw RuntimeException
-        doThrow(RuntimeException.class).when(wasteCategoryService).deleteWasteCategory(anyLong());
+        doThrow(RuntimeException.class).when(wasteCategoryService).deleteWasteCategory(anyString());
 
         // Call the controller method and assert the exception
-        ResponseEntity<String> responseEntity = wasteCategoryController.deleteWasteCategory(1L);
+        ResponseEntity<String> responseEntity = wasteCategoryController.deleteWasteCategory("1");
 
         // Verify that the service method was called
-        verify(wasteCategoryService, times(1)).deleteWasteCategory(1L);
+        verify(wasteCategoryService, times(1)).deleteWasteCategory("1");
 
         // Assert the response status code
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());

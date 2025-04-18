@@ -63,7 +63,17 @@ public class DisposalGuidelineService {
         return disposalGuidelineRepository.findByLegalRequirementsContainingIgnoreCase(legalRequirements);
     }
 
-    public List<DisposalGuideline> searchDisposalGuidelines(Long wasteCategoryId, String description, String steps, String legalRequirements) {
+    public List<DisposalGuideline> searchDisposalGuidelines(String wasteCategoryId, String description, String steps, String legalRequirements) {
         return disposalGuidelineRepository.searchDisposalGuidelines(wasteCategoryId, description, steps, legalRequirements);
+    }
+
+    // For backward compatibility with controllers still using Long
+    public List<DisposalGuideline> searchDisposalGuidelines(Long wasteCategoryId, String description, String steps, String legalRequirements) {
+        return searchDisposalGuidelines(
+            wasteCategoryId != null ? wasteCategoryId.toString() : null,
+            description,
+            steps,
+            legalRequirements
+        );
     }
 }

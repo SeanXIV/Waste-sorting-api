@@ -38,7 +38,7 @@ public class DisposalGuidelineControllerTests {
 	public void testGetAllDisposalGuidelines() {
 		List<DisposalGuideline> disposalGuidelines = new ArrayList<>();
 		DisposalGuideline guideline1 = new DisposalGuideline();
-		guideline1.setId(1L);
+		guideline1.setId("1");
 		guideline1.setDescription("Guideline 1");
 		disposalGuidelines.add(guideline1);
 
@@ -52,21 +52,21 @@ public class DisposalGuidelineControllerTests {
 	@Test
 	public void testGetDisposalGuidelineById() {
 		DisposalGuideline guideline = new DisposalGuideline();
-		guideline.setId(1L);
+		guideline.setId("1");
 		guideline.setDescription("Guideline 1");
 
-		when(disposalGuidelineService.getDisposalGuidelineById(1L)).thenReturn(Optional.of(guideline));
+		when(disposalGuidelineService.getDisposalGuidelineById("1")).thenReturn(Optional.of(guideline));
 
-		ResponseEntity<?> responseEntity = disposalGuidelineController.getDisposalGuidelineById(1L);
+		ResponseEntity<?> responseEntity = disposalGuidelineController.getDisposalGuidelineById("1");
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 		assertEquals(guideline, responseEntity.getBody());
 	}
 
 	@Test
 	public void testGetDisposalGuidelineById_NotFound() {
-		when(disposalGuidelineService.getDisposalGuidelineById(1L)).thenReturn(Optional.empty());
+		when(disposalGuidelineService.getDisposalGuidelineById("1")).thenReturn(Optional.empty());
 
-		ResponseEntity<?> responseEntity = disposalGuidelineController.getDisposalGuidelineById(1L);
+		ResponseEntity<?> responseEntity = disposalGuidelineController.getDisposalGuidelineById("1");
 		assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
 	}
 
@@ -76,7 +76,7 @@ public class DisposalGuidelineControllerTests {
 		BindingResult bindingResult = mock(BindingResult.class);
 
 		DisposalGuideline guideline = new DisposalGuideline();
-		guideline.setId(1L);
+		guideline.setId("1");
 		guideline.setDescription("Guideline 1");
 
 		when(disposalGuidelineService.saveDisposalGuideline(guideline)).thenReturn(guideline);
@@ -88,9 +88,9 @@ public class DisposalGuidelineControllerTests {
 
 	@Test
 	public void testDeleteDisposalGuideline() {
-		ResponseEntity<String> responseEntity = disposalGuidelineController.deleteDisposalGuideline(1L);
+		ResponseEntity<String> responseEntity = disposalGuidelineController.deleteDisposalGuideline("1");
 		assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
-		verify(disposalGuidelineService, times(1)).deleteDisposalGuideline(1L);
+		verify(disposalGuidelineService, times(1)).deleteDisposalGuideline("1");
 	}
 
 	@Test

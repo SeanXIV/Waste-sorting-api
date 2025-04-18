@@ -80,7 +80,7 @@ public class WasteCategoryController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<?> getWasteCategoryById(
-            @Parameter(description = "ID of waste category to be retrieved") @PathVariable Long id) {
+            @Parameter(description = "ID of waste category to be retrieved") @PathVariable String id) {
         try {
             Optional<WasteCategory> optionalWasteCategory = wasteCategoryService.getWasteCategoryById(id);
             WasteCategory wasteCategory = optionalWasteCategory.orElseThrow(() -> new ResourceNotFoundException("Waste Category not found with id: " + id));
@@ -102,7 +102,7 @@ public class WasteCategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteWasteCategory(@PathVariable Long id) {
+    public ResponseEntity<String> deleteWasteCategory(@PathVariable String id) {
         try {
             wasteCategoryService.deleteWasteCategory(id);
             return ResponseEntity.noContent().build();
@@ -114,7 +114,7 @@ public class WasteCategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateWasteCategory(@PathVariable Long id, @Valid @RequestBody WasteCategory wasteCategory, BindingResult bindingResult) {
+    public ResponseEntity<?> updateWasteCategory(@PathVariable String id, @Valid @RequestBody WasteCategory wasteCategory, BindingResult bindingResult) {
         try {
             if (bindingResult.hasErrors()) {
                 throw new ValidationException(bindingResult.getAllErrors().get(0).getDefaultMessage());
@@ -125,7 +125,7 @@ public class WasteCategoryController {
                 throw new ResourceNotFoundException("Waste Category not found with id: " + id);
             }
 
-            wasteCategory.setId(id.toString()); // Ensure the ID is set correctly
+            wasteCategory.setId(id); // Ensure the ID is set correctly
             WasteCategory updatedWasteCategory = wasteCategoryService.saveWasteCategory(wasteCategory);
             return ResponseEntity.ok(updatedWasteCategory);
         } catch (ResourceNotFoundException ex) {
@@ -138,7 +138,7 @@ public class WasteCategoryController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> partialUpdateWasteCategory(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<?> partialUpdateWasteCategory(@PathVariable String id, @RequestBody Map<String, Object> updates) {
         try {
             Optional<WasteCategory> optionalWasteCategory = wasteCategoryService.getWasteCategoryById(id);
             if (!optionalWasteCategory.isPresent()) {

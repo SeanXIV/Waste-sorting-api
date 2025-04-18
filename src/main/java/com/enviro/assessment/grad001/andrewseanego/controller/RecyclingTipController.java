@@ -39,7 +39,7 @@ public class RecyclingTipController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getRecyclingTipById(@PathVariable Long id) {
+    public ResponseEntity<?> getRecyclingTipById(@PathVariable String id) {
         try {
             Optional<RecyclingTip> optionalRecyclingTip = recyclingTipService.getRecyclingTipById(id);
             RecyclingTip recyclingTip = optionalRecyclingTip.orElseThrow(() -> new ResourceNotFoundException("Recycling Tip not found with id: " + id));
@@ -61,7 +61,7 @@ public class RecyclingTipController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteRecyclingTip(@PathVariable Long id) {
+    public ResponseEntity<String> deleteRecyclingTip(@PathVariable String id) {
         try {
             recyclingTipService.deleteRecyclingTip(id);
             return ResponseEntity.noContent().build();
@@ -73,7 +73,7 @@ public class RecyclingTipController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateRecyclingTip(@PathVariable Long id, @Valid @RequestBody RecyclingTip recyclingTip, BindingResult bindingResult) {
+    public ResponseEntity<?> updateRecyclingTip(@PathVariable String id, @Valid @RequestBody RecyclingTip recyclingTip, BindingResult bindingResult) {
         try {
             if (bindingResult.hasErrors()) {
                 throw new ValidationException(bindingResult.getAllErrors().get(0).getDefaultMessage());
@@ -84,7 +84,7 @@ public class RecyclingTipController {
                 throw new ResourceNotFoundException("Recycling Tip not found with id: " + id);
             }
 
-            recyclingTip.setId(id.toString()); // Ensure the ID is set correctly
+            recyclingTip.setId(id); // Ensure the ID is set correctly
             RecyclingTip updatedRecyclingTip = recyclingTipService.saveRecyclingTip(recyclingTip);
             return ResponseEntity.ok(updatedRecyclingTip);
         } catch (ResourceNotFoundException ex) {
@@ -97,7 +97,7 @@ public class RecyclingTipController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> partialUpdateRecyclingTip(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<?> partialUpdateRecyclingTip(@PathVariable String id, @RequestBody Map<String, Object> updates) {
         try {
             Optional<RecyclingTip> optionalRecyclingTip = recyclingTipService.getRecyclingTipById(id);
             if (!optionalRecyclingTip.isPresent()) {
@@ -134,7 +134,7 @@ public class RecyclingTipController {
 
     @GetMapping("/search")
     public ResponseEntity<List<RecyclingTip>> searchRecyclingTips(
-            @RequestParam(required = false) Long wasteCategoryId,
+            @RequestParam(required = false) String wasteCategoryId,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String source,
@@ -153,7 +153,7 @@ public class RecyclingTipController {
     }
 
     @GetMapping("/search/waste-category/{wasteCategoryId}")
-    public ResponseEntity<List<RecyclingTip>> findByWasteCategory(@PathVariable Long wasteCategoryId) {
+    public ResponseEntity<List<RecyclingTip>> findByWasteCategory(@PathVariable String wasteCategoryId) {
         try {
             // First, get the waste category by ID
             WasteCategory wasteCategory = wasteCategoryService.getWasteCategoryById(wasteCategoryId)

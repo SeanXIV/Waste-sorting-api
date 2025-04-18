@@ -38,7 +38,7 @@ public class DisposalGuidelineController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getDisposalGuidelineById(@PathVariable Long id) {
+    public ResponseEntity<?> getDisposalGuidelineById(@PathVariable String id) {
         try {
             Optional<DisposalGuideline> optionalDisposalGuideline = disposalGuidelineService.getDisposalGuidelineById(id);
             DisposalGuideline disposalGuideline = optionalDisposalGuideline.orElseThrow(() -> new ResourceNotFoundException("Disposal Guideline not found with id: " + id));
@@ -60,7 +60,7 @@ public class DisposalGuidelineController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteDisposalGuideline(@PathVariable Long id) {
+    public ResponseEntity<String> deleteDisposalGuideline(@PathVariable String id) {
         try {
             disposalGuidelineService.deleteDisposalGuideline(id);
             return ResponseEntity.noContent().build();
@@ -72,7 +72,7 @@ public class DisposalGuidelineController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateDisposalGuideline(@PathVariable Long id, @Valid @RequestBody DisposalGuideline disposalGuideline, BindingResult bindingResult) {
+    public ResponseEntity<?> updateDisposalGuideline(@PathVariable String id, @Valid @RequestBody DisposalGuideline disposalGuideline, BindingResult bindingResult) {
         try {
             if (bindingResult.hasErrors()) {
                 throw new ValidationException(bindingResult.getAllErrors().get(0).getDefaultMessage());
@@ -83,7 +83,7 @@ public class DisposalGuidelineController {
                 throw new ResourceNotFoundException("Disposal Guideline not found with id: " + id);
             }
 
-            disposalGuideline.setId(id.toString()); // Ensure the ID is set correctly
+            disposalGuideline.setId(id); // Ensure the ID is set correctly
             DisposalGuideline updatedDisposalGuideline = disposalGuidelineService.saveDisposalGuideline(disposalGuideline);
             return ResponseEntity.ok(updatedDisposalGuideline);
         } catch (ResourceNotFoundException ex) {
@@ -96,7 +96,7 @@ public class DisposalGuidelineController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> partialUpdateDisposalGuideline(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<?> partialUpdateDisposalGuideline(@PathVariable String id, @RequestBody Map<String, Object> updates) {
         try {
             Optional<DisposalGuideline> optionalDisposalGuideline = disposalGuidelineService.getDisposalGuidelineById(id);
             if (!optionalDisposalGuideline.isPresent()) {
@@ -133,7 +133,7 @@ public class DisposalGuidelineController {
 
     @GetMapping("/search")
     public ResponseEntity<List<DisposalGuideline>> searchDisposalGuidelines(
-            @RequestParam(required = false) Long wasteCategoryId,
+            @RequestParam(required = false) String wasteCategoryId,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String steps,
             @RequestParam(required = false) String legalRequirements) {
@@ -143,7 +143,7 @@ public class DisposalGuidelineController {
     }
 
     @GetMapping("/search/waste-category/{wasteCategoryId}")
-    public ResponseEntity<List<DisposalGuideline>> findByWasteCategory(@PathVariable Long wasteCategoryId) {
+    public ResponseEntity<List<DisposalGuideline>> findByWasteCategory(@PathVariable String wasteCategoryId) {
         try {
             // First, get the waste category by ID
             WasteCategory wasteCategory = wasteCategoryService.getWasteCategoryById(wasteCategoryId)
