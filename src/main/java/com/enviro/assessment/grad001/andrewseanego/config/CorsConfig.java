@@ -20,30 +20,28 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration config = new CorsConfiguration();
-        
-        // Allow all origins by default, but can be configured via environment variable
-        String[] origins = allowedOrigins.split(",");
-        if (origins.length == 1 && origins[0].equals("*")) {
-            config.setAllowedOriginPatterns(Collections.singletonList("*"));
-        } else {
-            config.setAllowedOrigins(Arrays.asList(origins));
-        }
-        
+
+        // Allow all origins
+        config.setAllowedOriginPatterns(Collections.singletonList("*"));
+
         // Allow all common HTTP methods
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        
+
         // Allow all headers
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-        
-        // Allow cookies
+        config.setAllowedHeaders(Arrays.asList("*"));
+
+        // Allow credentials
         config.setAllowCredentials(true);
-        
+
+        // Expose headers
+        config.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
+
         // How long the response from a pre-flight request can be cached
         config.setMaxAge(3600L);
-        
+
         // Apply this configuration to all paths
         source.registerCorsConfiguration("/**", config);
-        
+
         return new CorsFilter(source);
     }
 }
