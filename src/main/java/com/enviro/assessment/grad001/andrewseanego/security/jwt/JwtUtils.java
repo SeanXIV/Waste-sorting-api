@@ -2,7 +2,6 @@ package com.enviro.assessment.grad001.andrewseanego.security.jwt;
 
 import com.enviro.assessment.grad001.andrewseanego.security.services.UserDetailsImpl;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +34,13 @@ public class JwtUtils {
     }
 
     private Key key() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+        try {
+            return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        } catch (Exception e) {
+            logger.error("Error creating key: {}", e.getMessage());
+            // Fallback to a simple key if there's an issue
+            return Keys.hmacShaKeyFor("fallbackSecretKey123456789".getBytes());
+        }
     }
 
     public String getUserNameFromJwtToken(String token) {
