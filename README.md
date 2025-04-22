@@ -1,15 +1,18 @@
-# Enviro365-Assessment
+# Waste Sorting API
 
 ## Overview
 
-This project is a Waste Management System API that provides endpoints for managing waste categories, disposal guidelines, and recycling tips.
+This project is a Waste Management System API that provides endpoints for managing waste categories, disposal guidelines, and recycling tips. The API is deployed on Render and uses MongoDB Atlas for data storage.
 
 ## Technologies Used
 
 - Java 17
 - Spring Boot
-- H2 Database
+- MongoDB Atlas (primary database)
+- Embedded MongoDB (fallback for development/testing)
+- Spring Security with JWT Authentication
 - Maven
+- Swagger/OpenAPI for documentation
 
 ## API Endpoints
 
@@ -97,19 +100,40 @@ This project is a Waste Management System API that provides endpoints for managi
 - **GET /api/reports/by-status**: Get waste collections report grouped by status.
 - **GET /api/reports/comprehensive**: Get a comprehensive report with all metrics.
 
-## Running the Application
+## Deployment
 
-1. Clone the repository: `git clone https://github.com/SeanXIV/Enviro365-Assessment.git`
-2. Navigate to the project directory: `cd Enviro365-Assessment`
+The API is deployed and accessible at: https://waste-sorting-api.onrender.com
+
+## Running the Application Locally
+
+### Option 1: Using MongoDB Atlas (Recommended)
+
+1. Clone the repository: `git clone https://github.com/SeanXIV/Waste-sorting-api.git`
+2. Navigate to the project directory: `cd Waste-sorting-api`
+3. Create a `.env` file in the root directory with your MongoDB Atlas connection string:
+   ```
+   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/waste_management?retryWrites=true&w=majority
+   ```
+4. Build the project: `mvn clean install`
+5. Run the application: `java -jar ./target/andrewseanego-0.0.1-SNAPSHOT.jar`
+
+### Option 2: Using Embedded MongoDB
+
+1. Clone the repository: `git clone https://github.com/SeanXIV/Waste-sorting-api.git`
+2. Navigate to the project directory: `cd Waste-sorting-api`
 3. Build the project: `mvn clean install`
-4. Run the application: `java -jar .\target\andrewseanego-0.0.1-SNAPSHOT.jar`
+4. Run the application: `java -jar ./target/andrewseanego-0.0.1-SNAPSHOT.jar`
+
+The application will automatically fall back to embedded MongoDB if it cannot connect to MongoDB Atlas.
 
 ## API Documentation
 
 The API documentation is available via Swagger UI:
 
-- **Swagger UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-- **OpenAPI Docs**: [http://localhost:8080/api-docs](http://localhost:8080/api-docs)
+- **Deployed Swagger UI**: [https://waste-sorting-api.onrender.com/swagger-ui.html](https://waste-sorting-api.onrender.com/swagger-ui.html)
+- **Deployed OpenAPI Docs**: [https://waste-sorting-api.onrender.com/api-docs](https://waste-sorting-api.onrender.com/api-docs)
+- **Local Swagger UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- **Local OpenAPI Docs**: [http://localhost:8080/api-docs](http://localhost:8080/api-docs)
 
 ## Authentication
 
@@ -129,6 +153,10 @@ The API uses JWT (JSON Web Token) for authentication. To access protected endpoi
   - Request body: `{"username": "user", "password": "password"}`
   - Response includes the JWT token to use for authentication
 
+
+## Frontend Application
+
+A separate frontend application is being developed to interact with this API. The frontend will be built using Next.js and deployed on Vercel.
 
 ## Contributors
 
