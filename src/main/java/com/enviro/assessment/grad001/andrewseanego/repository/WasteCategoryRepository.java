@@ -8,11 +8,14 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface WasteCategoryRepository extends MongoRepository<WasteCategory, String> {
     // The JpaRepository interface already provides a set of CRUD methods for interacting with the database
 
     // Search methods
+    Optional<WasteCategory> findByNameIgnoreCase(String name);
+
     List<WasteCategory> findByNameContainingIgnoreCase(String name);
     Page<WasteCategory> findByNameContainingIgnoreCase(String name, Pageable pageable);
 

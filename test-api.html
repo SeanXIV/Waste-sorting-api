@@ -56,7 +56,7 @@
 </head>
 <body>
     <h1>Test Waste Sorting API</h1>
-    
+
     <div class="container">
         <div class="card">
             <h2>Register User</h2>
@@ -86,7 +86,7 @@
                 <pre id="register-response"></pre>
             </div>
         </div>
-        
+
         <div class="card">
             <h2>Login User</h2>
             <div class="form-group">
@@ -107,7 +107,7 @@
                 <pre id="login-response"></pre>
             </div>
         </div>
-        
+
         <div class="card">
             <h2>Get Waste Categories</h2>
             <div class="form-group">
@@ -124,6 +124,40 @@
                 <pre id="categories-response"></pre>
             </div>
         </div>
+
+        <div class="card">
+            <h2>Get Disposal Guidelines</h2>
+            <div class="form-group">
+                <label for="guidelines-token">JWT Token:</label>
+                <input type="text" id="guidelines-token" placeholder="Enter JWT token from login response">
+            </div>
+            <div class="form-group">
+                <label for="guidelines-url">API URL:</label>
+                <input type="text" id="guidelines-url" value="http://localhost:8080/api/disposal-guidelines">
+            </div>
+            <button onclick="getDisposalGuidelines()">Get Guidelines</button>
+            <div class="form-group">
+                <label for="guidelines-response">Response:</label>
+                <pre id="guidelines-response"></pre>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Get Recycling Tips</h2>
+            <div class="form-group">
+                <label for="tips-token">JWT Token:</label>
+                <input type="text" id="tips-token" placeholder="Enter JWT token from login response">
+            </div>
+            <div class="form-group">
+                <label for="tips-url">API URL:</label>
+                <input type="text" id="tips-url" value="http://localhost:8080/api/recycling-tips">
+            </div>
+            <button onclick="getRecyclingTips()">Get Tips</button>
+            <div class="form-group">
+                <label for="tips-response">Response:</label>
+                <pre id="tips-response"></pre>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -134,7 +168,7 @@
             const role = document.getElementById('register-role').value;
             const url = document.getElementById('register-url').value;
             const responseElement = document.getElementById('register-response');
-            
+
             try {
                 const response = await fetch(url, {
                     method: 'POST',
@@ -148,20 +182,20 @@
                         role: [role]
                     })
                 });
-                
+
                 const data = await response.json();
                 responseElement.textContent = JSON.stringify(data, null, 2);
             } catch (error) {
                 responseElement.textContent = error.message;
             }
         }
-        
+
         async function login() {
             const username = document.getElementById('login-username').value;
             const password = document.getElementById('login-password').value;
             const url = document.getElementById('login-url').value;
             const responseElement = document.getElementById('login-response');
-            
+
             try {
                 const response = await fetch(url, {
                     method: 'POST',
@@ -173,29 +207,32 @@
                         password
                     })
                 });
-                
+
                 const data = await response.json();
                 responseElement.textContent = JSON.stringify(data, null, 2);
-                
-                // If login successful, extract token
+
+                // If login successful, extract token and populate all token fields
                 if (data.accessToken) {
-                    document.getElementById('token').value = data.accessToken;
+                    const token = data.accessToken;
+                    document.getElementById('token').value = token;
+                    document.getElementById('guidelines-token').value = token;
+                    document.getElementById('tips-token').value = token;
                 }
             } catch (error) {
                 responseElement.textContent = error.message;
             }
         }
-        
+
         async function getWasteCategories() {
             const token = document.getElementById('token').value;
             const url = document.getElementById('categories-url').value;
             const responseElement = document.getElementById('categories-response');
-            
+
             if (!token) {
                 responseElement.textContent = 'Please login first to get a token';
                 return;
             }
-            
+
             try {
                 const response = await fetch(url, {
                     method: 'GET',
@@ -203,7 +240,61 @@
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                
+
+                const data = await response.json();
+                responseElement.textContent = JSON.stringify(data, null, 2);
+
+                // Update token fields in other sections
+                document.getElementById('guidelines-token').value = token;
+                document.getElementById('tips-token').value = token;
+            } catch (error) {
+                responseElement.textContent = error.message;
+            }
+        }
+
+        async function getDisposalGuidelines() {
+            const token = document.getElementById('guidelines-token').value;
+            const url = document.getElementById('guidelines-url').value;
+            const responseElement = document.getElementById('guidelines-response');
+
+            if (!token) {
+                responseElement.textContent = 'Please login first to get a token';
+                return;
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                responseElement.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                responseElement.textContent = error.message;
+            }
+        }
+
+        async function getRecyclingTips() {
+            const token = document.getElementById('tips-token').value;
+            const url = document.getElementById('tips-url').value;
+            const responseElement = document.getElementById('tips-response');
+
+            if (!token) {
+                responseElement.textContent = 'Please login first to get a token';
+                return;
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
                 const data = await response.json();
                 responseElement.textContent = JSON.stringify(data, null, 2);
             } catch (error) {
