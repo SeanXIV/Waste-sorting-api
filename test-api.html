@@ -109,6 +109,52 @@
         </div>
 
         <div class="card">
+            <h2>Initialize Data</h2>
+            <div class="form-group">
+                <label for="init-url">API URL:</label>
+                <input type="text" id="init-url" value="http://localhost:8080/public/init-data">
+            </div>
+            <button onclick="initializeData()">Initialize Data</button>
+            <div class="form-group">
+                <label for="init-response">Response:</label>
+                <pre id="init-response"></pre>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Public Endpoints (No Auth Required)</h2>
+            <div class="form-group">
+                <label for="public-categories-url">Waste Categories URL:</label>
+                <input type="text" id="public-categories-url" value="http://localhost:8080/public/waste-categories">
+            </div>
+            <button onclick="getPublicWasteCategories()">Get Categories</button>
+            <div class="form-group">
+                <label for="public-categories-response">Response:</label>
+                <pre id="public-categories-response"></pre>
+            </div>
+
+            <div class="form-group">
+                <label for="public-guidelines-url">Disposal Guidelines URL:</label>
+                <input type="text" id="public-guidelines-url" value="http://localhost:8080/public/disposal-guidelines">
+            </div>
+            <button onclick="getPublicDisposalGuidelines()">Get Guidelines</button>
+            <div class="form-group">
+                <label for="public-guidelines-response">Response:</label>
+                <pre id="public-guidelines-response"></pre>
+            </div>
+
+            <div class="form-group">
+                <label for="public-tips-url">Recycling Tips URL:</label>
+                <input type="text" id="public-tips-url" value="http://localhost:8080/public/recycling-tips">
+            </div>
+            <button onclick="getPublicRecyclingTips()">Get Tips</button>
+            <div class="form-group">
+                <label for="public-tips-response">Response:</label>
+                <pre id="public-tips-response"></pre>
+            </div>
+        </div>
+
+        <div class="card">
             <h2>Get Waste Categories</h2>
             <div class="form-group">
                 <label for="token">JWT Token:</label>
@@ -161,6 +207,70 @@
     </div>
 
     <script>
+        async function initializeData() {
+            const url = document.getElementById('init-url').value;
+            const responseElement = document.getElementById('init-response');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET'
+                });
+
+                const data = await response.text();
+                responseElement.textContent = data;
+            } catch (error) {
+                responseElement.textContent = error.message;
+            }
+        }
+
+        async function getPublicWasteCategories() {
+            const url = document.getElementById('public-categories-url').value;
+            const responseElement = document.getElementById('public-categories-response');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET'
+                });
+
+                const data = await response.json();
+                responseElement.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                responseElement.textContent = error.message;
+            }
+        }
+
+        async function getPublicDisposalGuidelines() {
+            const url = document.getElementById('public-guidelines-url').value;
+            const responseElement = document.getElementById('public-guidelines-response');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET'
+                });
+
+                const data = await response.json();
+                responseElement.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                responseElement.textContent = error.message;
+            }
+        }
+
+        async function getPublicRecyclingTips() {
+            const url = document.getElementById('public-tips-url').value;
+            const responseElement = document.getElementById('public-tips-response');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET'
+                });
+
+                const data = await response.json();
+                responseElement.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                responseElement.textContent = error.message;
+            }
+        }
+
         async function register() {
             const username = document.getElementById('register-username').value;
             const email = document.getElementById('register-email').value;

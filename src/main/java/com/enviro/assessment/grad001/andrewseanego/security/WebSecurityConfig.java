@@ -66,6 +66,8 @@ public class WebSecurityConfig {
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/swagger-ui.html").permitAll()
                     .requestMatchers("/h2-console/**").permitAll() // Allow H2 console access
+                    .requestMatchers("/api/init-data/**").permitAll() // Allow data initialization
+                    .requestMatchers("/public/**").permitAll() // Allow public endpoints
                     .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // Allow OPTIONS requests
                     .anyRequest().authenticated()
             );

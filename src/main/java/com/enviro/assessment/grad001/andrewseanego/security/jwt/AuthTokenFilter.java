@@ -30,8 +30,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            // Skip authentication for OPTIONS requests
-            if (request.getMethod().equals("OPTIONS")) {
+            // Skip authentication for OPTIONS requests and data initialization
+            if (request.getMethod().equals("OPTIONS") ||
+                request.getRequestURI().startsWith("/api/init-data")) {
                 filterChain.doFilter(request, response);
                 return;
             }

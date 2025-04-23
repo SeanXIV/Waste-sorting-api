@@ -148,11 +148,14 @@ public class MongoDataInitializer {
                     hazardousGuideline.setSteps("1. Keep in original labeled containers when possible\n2. Never mix different hazardous materials\n3. Store in cool, dry place away from children and pets\n4. Transport securely to prevent spills\n5. Only take to designated hazardous waste facilities during collection events");
                     hazardousGuideline.setLegalRequirements("Strict regulations govern hazardous waste disposal. Improper disposal can result in significant fines. Businesses generating hazardous waste must follow specific documentation and disposal procedures.");
 
-                    disposalGuidelineRepository.saveAll(Arrays.asList(
+                    List<DisposalGuideline> savedGuidelines = disposalGuidelineRepository.saveAll(Arrays.asList(
                         plasticGuideline, paperGuideline, glassGuideline, metalGuideline,
                         organicGuideline, electronicGuideline, hazardousGuideline
                     ));
-                    System.out.println("Disposal guidelines initialized");
+                    System.out.println("Disposal guidelines initialized: " + savedGuidelines.size());
+                    for (DisposalGuideline guideline : savedGuidelines) {
+                        System.out.println("Saved guideline: " + guideline.getId() + " - " + guideline.getDescription());
+                    }
                 }
 
                 // Initialize recycling tips if they don't exist
@@ -248,12 +251,15 @@ public class MongoDataInitializer {
                     hazardousTip2.setDescription("Before disposing of paint, consider donating usable leftovers to community programs, schools, or theater groups. For unusable latex paint, mix with cat litter or paint hardener until solid, then it can often go in regular trash. Oil-based paints always require hazardous waste disposal.");
                     hazardousTip2.setSource("PaintCare");
 
-                    recyclingTipRepository.saveAll(Arrays.asList(
+                    List<RecyclingTip> savedTips = recyclingTipRepository.saveAll(Arrays.asList(
                         plasticTip1, plasticTip2, paperTip1, paperTip2, glassTip1, glassTip2,
                         metalTip1, metalTip2, organicTip1, organicTip2, electronicTip1, electronicTip2,
                         hazardousTip1, hazardousTip2
                     ));
-                    System.out.println("Recycling tips initialized");
+                    System.out.println("Recycling tips initialized: " + savedTips.size());
+                    for (RecyclingTip tip : savedTips) {
+                        System.out.println("Saved tip: " + tip.getId() + " - " + tip.getTitle());
+                    }
                 }
             }
             } catch (MongoException | DataAccessException e) {
